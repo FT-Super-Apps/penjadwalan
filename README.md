@@ -1,6 +1,3 @@
-Berikut adalah contoh file `README.md` dalam bahasa Indonesia yang menjelaskan proyek Anda:
-
-```markdown
 # Penjadwalan Kuliah Menggunakan Algoritma Genetika
 
 Proyek ini bertujuan untuk membuat penjadwalan kuliah yang optimal menggunakan algoritma genetika. Sistem ini mempertimbangkan preferensi waktu dosen, menghindari bentrok waktu, dan memastikan distribusi ruangan yang efisien.
