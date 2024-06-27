@@ -17,7 +17,7 @@ dataKuliah = [
 ]
 ```
 
-### 2. Data Waktu (`waktu2`)
+### 2. Data Waktu (`waktu`)
 Menyimpan informasi mengenai waktu perkuliahan.
 
 Contoh:
