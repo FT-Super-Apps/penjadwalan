@@ -1,0 +1,69 @@
+# Enhanced University Scheduling System - Web Interface Requirements
+# Flask web application with file upload and scheduling capabilities
+
+# Core Flask dependencies
+Flask>=2.3.0                     # Web framework
+Werkzeug>=2.3.0                 # WSGI utilities
+Jinja2>=3.1.0                   # Template engine
+MarkupSafe>=2.1.0               # Safe string handling
+
+# File processing and data handling
+pandas>=2.0.0                   # Data manipulation and analysis
+numpy>=1.24.0                   # Numerical computing
+openpyxl>=3.1.0                 # Excel file reading/writing
+xlrd>=2.0.0                     # Legacy Excel file support
+
+# System monitoring and utilities
+psutil>=5.9.0                   # System and process monitoring
+colorama>=0.4.6                 # Terminal colors (for console output)
+
+# JSON handling and validation
+jsonschema>=4.17.0              # JSON schema validation
+
+# Optional: Database support (if extending to persistent storage)
+SQLAlchemy>=2.0.0               # Database ORM
+Flask-SQLAlchemy>=3.0.0         # Flask-SQLAlchemy integration
+
+# Optional: Authentication and security (for production)
+Flask-Login>=0.6.2              # User session management
+Flask-WTF>=1.1.0               # Form handling and CSRF protection
+WTForms>=3.0.0                 # Form validation
+
+# Optional: API documentation
+Flask-RESTX>=1.1.0             # REST API documentation
+flasgger>=0.9.7                # Swagger/OpenAPI documentation
+
+# Optional: Task queue for long-running jobs
+Celery>=5.3.0                  # Distributed task queue
+Redis>=4.5.0                   # In-memory data store (for Celery broker)
+
+# Optional: WebSocket support for real-time updates
+Flask-SocketIO>=5.3.0          # WebSocket support
+python-socketio>=5.8.0         # Socket.IO Python implementation
+
+# Development and testing
+pytest>=7.4.0                  # Testing framework
+pytest-flask>=1.2.0           # Flask testing utilities
+pytest-cov>=4.1.0             # Coverage reporting
+black>=23.0.0                  # Code formatting
+flake8>=6.0.0                  # Code linting
+mypy>=1.5.0                    # Type checking
+
+# Production WSGI server
+gunicorn>=21.0.0               # Python WSGI HTTP Server
+gevent>=23.0.0                 # Asynchronous networking library
+
+# Optional: Performance monitoring
+Flask-APM>=0.3.0               # Application performance monitoring
+prometheus-flask-exporter>=0.22.0  # Prometheus metrics
+
+# Optional: Caching
+Flask-Caching>=2.0.0           # Caching support
+redis>=4.5.0                   # Redis cache backend
+
+# Optional: Email notifications
+Flask-Mail>=0.9.1              # Email sending capabilities
+
+# Optional: File storage
+boto3>=1.28.0                  # AWS SDK (for S3 file storage)
+azure-storage-blob>=12.17.0    # Azure Blob storage

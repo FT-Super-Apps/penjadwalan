@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced University Scheduling System</title>
+    
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f8fafc;
+            --border-radius: 12px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            color: var(--dark-color);
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-5px);
+        }
+
+        .upload-zone {
+            border: 3px dashed var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+
+        .upload-zone:hover {
+            border-color: var(--secondary-color);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--success-color);
+            background: rgba(16, 185, 129, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover .upload-icon {
+            transform: scale(1.1);
+            color: var(--secondary-color);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* File Info */
+        .file-info {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Configuration Section */
+        .config-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .config-tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+
+        .config-tab {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6b7280;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .config-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .config-content {
+            display: none;
+        }
+
+        .config-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Process Button */
+        .process-btn {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            border: none;
+            color: white;
+            padding: 1rem 3rem;
+            border-radius: var(--border-radius);
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem auto;
+        }
+
+        .process-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .process-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .results-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Schedule Table */
+        .schedule-table-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .schedule-table th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .schedule-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.3s ease;
+        }
+
+        .schedule-table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .status-ok {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .export-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .upload-zone {
+                padding: 2rem 1rem;
+            }
+            
+            .upload-icon {
+                font-size: 3rem;
+            }
+            
+            .config-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .config-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* Tooltip */
+        .tooltip-custom {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-custom .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 0.875rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip-custom:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <h1 class="m-0">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    Enhanced Scheduling System
+                </h1>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge bg-success">v2.0</span>
+                    <a href="https://github.com/your-repo" class="text-decoration-none">
+                        <i class="fab fa-github fa-lg text-muted"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Upload Section -->
+        <section class="upload-section animate-on-scroll">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-upload me-2 text-primary"></i>
+                Upload Data Files
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h5><i class="fas fa-book me-2 text-primary"></i>Course Data</h5>
+                    <div class="upload-zone" id="courseUploadZone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Drop Course Data Here</h4>
+                        <p class="text-muted mb-3">Or click to browse files</p>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('courseFile').click()">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </button>
+                        <input type="file" id="courseFile" class="file-input" accept=".csv,.xlsx,.xls">
+                        <div class="file-info" id="courseFileInfo">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span id="courseFileName"></span>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeCourseFile()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Required columns: nama, dosen, sks
+                    </small>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <h5><i class="fas fa-clock me-2 text-primary"></i>Time Slots</h5>
+                    <div class="upload-zone" id="timeUploadZone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Drop Time Data Here</h4>
+                        <p class="text-muted mb-3">Or click to browse files</p>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('timeFile').click()">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </button>
+                        <input type="file" id="timeFile" class="file-input" accept=".csv,.xlsx,.xls">
+                        <div class="file-info" id="timeFileInfo">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span id="timeFileName"></span>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeTimeFile()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Required columns: hari, jam_mulai
+                    </small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h5><i class="fas fa-door-open me-2 text-primary"></i>Room Data</h5>
+                    <div class="upload-zone" id="roomUploadZone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Drop Room Data Here</h4>
+                        <p class="text-muted mb-3">Or click to browse files</p>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('roomFile').click()">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </button>
+                        <input type="file" id="roomFile" class="file-input" accept=".csv,.xlsx,.xls">
+                        <div class="file-info" id="roomFileInfo">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span id="roomFileName"></span>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removeRoomFile()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Required columns: nama, kapasitas
+                    </small>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <h5><i class="fas fa-user-tie me-2 text-primary"></i>Lecturer Preferences</h5>
+                    <div class="upload-zone" id="prefUploadZone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Drop Preferences Here</h4>
+                        <p class="text-muted mb-3">Or click to browse files</p>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('prefFile').click()">
+                            <i class="fas fa-folder-open me-2"></i>Choose File
+                        </button>
+                        <input type="file" id="prefFile" class="file-input" accept=".csv,.xlsx,.xls">
+                        <div class="file-info" id="prefFileInfo">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span id="prefFileName"></span>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" onclick="removePrefFile()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Optional: dosen, preferensi_waktu, tidak_bisa_waktu
+                    </small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Configuration Section -->
+        <section class="config-section animate-on-scroll">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-cogs me-2 text-primary"></i>
+                Configuration Settings
+            </h2>
+            
+            <div class="config-tabs">
+                <button class="config-tab active" onclick="switchTab('algorithm')">
+                    <i class="fas fa-dna me-2"></i>Algorithm
+                </button>
+                <button class="config-tab" onclick="switchTab('preferences')">
+                    <i class="fas fa-star me-2"></i>Preferences
+                </button>
+                <button class="config-tab" onclick="switchTab('constraints')">
+                    <i class="fas fa-lock me-2"></i>Constraints
+                </button>
+            </div>
+
+            <!-- Algorithm Configuration -->
+            <div class="config-content active" id="algorithm-config">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label tooltip-custom">
+                                Population Size
+                                <span class="tooltip-text">Number of chromosomes in each generation. Higher values improve solution quality but increase computation time.</span>
+                            </label>
+                            <input type="number" class="form-control" id="populationSize" value="10" min="4" max="100">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label tooltip-custom">
+                                Max Generations
+                                <span class="tooltip-text">Maximum number of generations to run. Higher values allow more optimization but take longer.</span>
+                            </label>
+                            <input type="number" class="form-control" id="maxGenerations" value="50" min="10" max="500">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label tooltip-custom">
+                                Crossover Rate (%)
+                                <span class="tooltip-text">Probability of crossover between parent chromosomes. Typical range: 70-90%.</span>
+                            </label>
+                            <input type="number" class="form-control" id="crossoverRate" value="75" min="50" max="95">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label tooltip-custom">
+                                Mutation Rate (%)
+                                <span class="tooltip-text">Probability of random changes in chromosomes. Typical range: 10-30%.</span>
+                            </label>
+                            <input type="number" class="form-control" id="mutationRate" value="25" min="5" max="50">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Early Termination Fitness</label>
+                            <input type="number" class="form-control" id="earlyTermination" value="0.95" min="0.8" max="1.0" step="0.01">
+                            <small class="text-muted">Stop algorithm when fitness reaches this value</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Minutes per SKS</label>
+                            <input type="number" class="form-control" id="minutesPerSks" value="50" min="30" max="90">
+                            <small class="text-muted">Duration of each credit hour in minutes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences Configuration -->
+            <div class="config-content" id="preferences-config">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label">Reserved Slots Penalty</label>
+                            <input type="number" class="form-control" id="reservedPenalty" value="1000" min="100" max="5000">
+                            <small class="text-muted">Highest penalty for violating exclusive slots</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Preferred Slots Penalty</label>
+                            <input type="number" class="form-control" id="preferredPenalty" value="30" min="10" max="100">
+                            <small class="text-muted">Penalty for not using preferred time slots</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Blocked Slots Penalty</label>
+                            <input type="number" class="form-control" id="blockedPenalty" value="50" min="20" max="200">
+                            <small class="text-muted">Penalty for using blocked time slots</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Enable Enhanced Preferences</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="enableEnhanced" checked>
+                        <label class="form-check-label" for="enableEnhanced">
+                            Use advanced preference system with reserved slots
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Constraints Configuration -->
+            <div class="config-content" id="constraints-config">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Clash Penalty Weight</label>
+                            <input type="number" class="form-control" id="clashWeight" value="100" min="50" max="500">
+                            <small class="text-muted">Penalty multiplier for time/room conflicts</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Allow Partial Solutions</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="allowPartial" checked>
+                                <label class="form-check-label" for="allowPartial">
+                                    Accept solutions with minor violations
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Optimize for</label>
+                            <select class="form-select" id="optimizeFor">
+                                <option value="fitness">Best Fitness Score</option>
+                                <option value="speed">Fastest Solution</option>
+                                <option value="balanced">Balanced Approach</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Button -->
+        <div class="text-center">
+            <button class="process-btn" id="processBtn" onclick="startScheduling()">
+                <i class="fas fa-play me-2"></i>
+                Start Scheduling Optimization
+            </button>
+        </div>
+
+        <!-- Loading Section -->
+        <section class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <h4>Processing Your Schedule...</h4>
+            <p class="text-muted">This may take a few moments depending on the complexity of your data.</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="progressText" class="mt-2 text-muted">Initializing...</div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-chart-line me-2 text-success"></i>
+                Optimization Results
+            </h2>
+            
+            <!-- Statistics -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Stats will be populated by JavaScript -->
+            </div>
+
+            <!-- Schedule Table -->
+            <div class="schedule-table-container">
+                <table class="schedule-table" id="scheduleTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-book me-2"></i>Course</th>
+                            <th><i class="fas fa-user me-2"></i>Lecturer</th>
+                            <th><i class="fas fa-calendar me-2"></i>Day</th>
+                            <th><i class="fas fa-clock me-2"></i>Time</th>
+                            <th><i class="fas fa-door-open me-2"></i>Room</th>
+                            <th><i class="fas fa-trophy me-2"></i>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleBody">
+                        <!-- Schedule data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="export-buttons">
+                <button class="export-btn" onclick="exportSchedule('excel')">
+                    <i class="fas fa-file-excel me-2"></i>Export to Excel
+                </button>
+                <button class="export-btn" onclick="exportSchedule('csv')">
+                    <i class="fas fa-file-csv me-2"></i>Export to CSV
+                </button>
+                <button class="export-btn" onclick="exportSchedule('pdf')">
+                    <i class="fas fa-file-pdf me-2"></i>Export to PDF
+                </button>
+                <button class="export-btn" onclick="generateReport()">
+                    <i class="fas fa-chart-bar me-2"></i>Generate Report
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
