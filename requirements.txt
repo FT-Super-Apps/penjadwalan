@@ -1,0 +1,42 @@
+# Enhanced University Scheduling System - Requirements
+# Python dependencies for the scheduling system with enhanced preferences
+
+# Core dependencies for the genetic algorithm
+psutil>=5.8.0                    # System monitoring (RAM usage)
+colorama>=0.4.4                  # Terminal colors for better output
+
+# Database connectivity (choose based on your database)
+mysql-connector-python>=8.0.29  # For MySQL database
+psycopg2-binary>=2.9.3          # For PostgreSQL database
+# sqlite3 is included in Python standard library
+
+# Optional: Performance monitoring and profiling
+memory-profiler>=0.60.0         # For detailed memory usage analysis
+line-profiler>=3.5.1           # For line-by-line performance profiling
+
+# Optional: Advanced analytics and visualization
+matplotlib>=3.5.0               # For fitness evolution plots
+numpy>=1.21.0                   # For numerical operations
+pandas>=1.4.0                   # For data analysis and export
+
+# Optional: Web interface dependencies (if implementing web UI)
+flask>=2.1.0                    # Web framework
+flask-sqlalchemy>=2.5.1        # Database ORM
+flask-wtf>=1.0.1               # Form handling
+jinja2>=3.1.0                  # Template engine
+
+# Optional: API development
+fastapi>=0.75.0                 # Modern API framework
+uvicorn>=0.17.0                 # ASGI server
+pydantic>=1.9.0                # Data validation
+
+# Development and testing dependencies
+pytest>=7.1.0                   # Testing framework
+pytest-cov>=3.0.0              # Coverage reporting
+black>=22.0.0                   # Code formatting
+flake8>=4.0.1                   # Code linting
+mypy>=0.950                     # Type checking
+
+# Documentation generation
+sphinx>=4.5.0                   # Documentation generator
+sphinx-rtd-theme>=1.0.0        # ReadTheDocs theme
