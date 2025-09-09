@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimtekMu Jadwal - Sistem Penjadwalan Universitas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            /* Primary Colors - Light Blue */
+            --primary-blue: #60a5fa;
+            --primary-blue-dark: #3b82f6;
+            --primary-blue-light: #dbeafe;
+            --primary-blue-50: #eff6ff;
+            
+            /* Accent Colors - Soft Red */
+            --accent-red: #f87171;
+            --accent-red-light: #fecaca;
+            --accent-red-dark: #ef4444;
+            --accent-red-50: #fef2f2;
+            
+            /* Neutrals */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-900: #0f172a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-blue-50) 0%, var(--gray-50) 100%);
+            min-height: 100vh;
+        }
+
+        /* Floating UI Styles */
+        .floating-header {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .floating-sidebar {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+        }
+
+        .card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        
+        .nav-item {
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .nav-item.active {
+            background: var(--primary-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+        }
+        
+        .nav-item:not(.active) {
+            color: #64748b;
+        }
+        
+        .nav-item:not(.active):hover {
+            background: var(--primary-blue-light);
+            color: var(--primary-blue-dark);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .stat-card-orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-card-green {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .stat-card-purple {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        
+        .table-header {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .table-row:hover {
+            background: #f8fafc;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .badge-purple {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+        
+        .badge-red {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(96, 165, 250, 0.4);
+        }
+        
+        .btn-secondary {
+            background: var(--accent-red);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(248, 113, 113, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--accent-red-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(248, 113, 113, 0.4);
+        }
+        
+        .sidebar {
+            background: white;
+            border-right: 1px solid #e2e8f0;
+        }
+        
+        .content-area {
+            background: #f8fafc;
+        }
+        
+        .time-slot {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .time-slot:hover {
+            border-color: #1e293b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        @keyframes loading-progress {
+            0% { width: 20%; }
+            50% { width: 80%; }
+            100% { width: 20%; }
+        }
+
+        .loading-overlay {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Search Dropdown Styling */
+        .search-dropdown {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            backdrop-filter: blur(8px);
+        }
+
+        .search-item:hover {
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            transform: translateX(2px);
+            transition: all 0.2s ease;
+        }
+
+        .selected-dosen {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 1px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div x-data="schedulingApp()" class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-calendar-alt text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">SimtekMu Jadwal</h1>
+                        <p class="text-sm text-gray-600 font-medium">Sistem Penjadwalan Universitas</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Cari..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                    </div>
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 min-h-screen">
+                <nav class="p-4 space-y-2">
+                    <button @click="currentTab = 'dashboard'" 
+                            :class="currentTab === 'dashboard' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-chart-line w-4"></i>
+                        <span>Ringkasan</span>
+                    </button>
+                    
+                    <button @click="currentTab = 'dosen'" 
+                            :class="currentTab === 'dosen' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-chalkboard-teacher w-4"></i>
+                        <span>Dosen</span>
+                    </button>
+                    
+                    <button @click="currentTab = 'kuliah'" 
+                            :class="currentTab === 'kuliah' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-book-open w-4"></i>
+                        <span>Kuliah</span>
+                    </button>
+                    
+                    <button @click="currentTab = 'waktu'" 
+                            :class="currentTab === 'waktu' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-clock w-4"></i>
+                        <span>Waktu</span>
+                    </button>
+                    
+                    <button @click="currentTab = 'ruangan'" 
+                            :class="currentTab === 'ruangan' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-door-open w-4"></i>
+                        <span>Ruangan</span>
+                    </button>
+                    
+                    <button @click="currentTab = 'preferences'" 
+                            :class="currentTab === 'preferences' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-heart w-4"></i>
+                        <span>Preferensi</span>
+                    </button>
+                    
+                    <button @click="currentTab = 'schedule'" 
+                            :class="currentTab === 'schedule' ? 'nav-item active' : 'nav-item'"
+                            class="w-full text-left flex items-center space-x-3">
+                        <i class="fas fa-calendar-alt w-4"></i>
+                        <span>Buat Jadwal</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6">
+                <!-- Dashboard Tab -->
+                <div x-show="currentTab === 'dashboard'">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Dashboard Utama</h2>
+                        <p class="text-gray-600">Ringkasan sistem penjadwalan Anda</p>
+                    </div>
+                    
+                    <!-- Loading Overlay -->
+                    <div x-show="isLoading" class="fixed inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50" style="backdrop-filter: blur(2px);">
+                        <div class="text-center p-8 bg-white rounded-xl shadow-2xl border">
+                            <div class="relative mb-6">
+                                <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 mx-auto"></div>
+                                <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent absolute top-0 left-1/2 transform -translate-x-1/2"></div>
+                            </div>
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg mx-auto mb-4">
+                                <i class="fas fa-calendar-alt text-white text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">SimtekMu Jadwal</h3>
+                            <p class="text-gray-600 mb-2" x-text="loadingMessage || 'Memuat data dari database...'"></p>
+                            <p class="text-sm text-blue-600 animate-pulse font-medium">Mohon tunggu sebentar...</p>
+                            <div class="w-64 bg-gray-200 rounded-full h-2 mt-4 mx-auto overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full animate-pulse" style="width: 75%; animation: loading-progress 2s ease-in-out infinite;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div x-show="hasError" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                            <div>
+                                <h3 class="text-sm font-medium text-red-800">Kesalahan Koneksi Database</h3>
+                                <p class="text-sm text-red-700 mt-1" x-text="errorMessage"></p>
+                                <button @click="loadData()" class="mt-2 text-sm bg-red-100 hover:bg-red-200 text-red-800 px-3 py-1 rounded">
+                                    <i class="fas fa-redo mr-1"></i>Coba Lagi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div x-show="!isLoading && !hasError" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Total Dosen</p>
+                                    <p class="text-2xl font-semibold text-gray-900" x-text="stats.dosen"></p>
+                                    <p class="text-sm text-green-600 mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>12% dari bulan lalu
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-chalkboard-teacher text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Total Kuliah</p>
+                                    <p class="text-2xl font-semibold text-gray-900" x-text="stats.kuliah"></p>
+                                    <p class="text-sm text-green-600 mt-1">
+                                        <i class="fas fa-arrow-up mr-1"></i>8% dari bulan lalu
+                                    </p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-book-open text-orange-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Slot Waktu</p>
+                                    <p class="text-2xl font-semibold text-gray-900" x-text="stats.waktu"></p>
+                                    <p class="text-sm text-blue-600 mt-1">50-minute intervals</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-clock text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-6 card-hover">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Ruangan</p>
+                                    <p class="text-2xl font-semibold text-gray-900" x-text="stats.ruangan"></p>
+                                    <p class="text-sm text-gray-500 mt-1">Available rooms</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-door-open text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button @click="currentTab = 'preferences'" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
+                                <i class="fas fa-plus text-gray-400 text-2xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-600">Tambah Dosen Preference</p>
+                            </button>
+                            <button @click="currentTab = 'schedule'" class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
+                                <i class="fas fa-calendar-plus text-gray-400 text-2xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-600">Generate Schedule</p>
+                            </button>
+                            <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
+                                <i class="fas fa-cog text-gray-400 text-2xl mb-2"></i>
+                                <p class="text-sm font-medium text-gray-600">Settings</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dosen Tab -->
+                <div x-show="currentTab === 'dosen'">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-900">Data Dosen</h2>
+                            <p class="text-gray-600">Manage lecturer information</p>
+                        </div>
+                        <button class="btn-primary" x-show="!isLoading && !hasError">
+                            <i class="fas fa-plus mr-2"></i>Tambah Dosen
+                        </button>
+                    </div>
+                    
+                    <!-- Memuat for Dosen -->
+                    <div x-show="isLoading" class="flex items-center justify-center py-12">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                            <p class="text-sm text-gray-600">Memuat dosen data...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Error for Dosen -->
+                    <div x-show="hasError" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-red-700">Failed to load dosen data. <button @click="loadData()" class="text-red-800 underline">Retry</button></p>
+                    </div>
+
+                    <div x-show="!isLoading && !hasError" class="card">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-medium text-gray-900">All Dosen</h3>
+                                <span class="text-sm text-gray-500" x-text="dosenData.length + ' total'"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto scrollbar-thin" style="max-height: 500px;">
+                            <table class="w-full">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIDN</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Dosen</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode Prodi</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <template x-for="(dosen, index) in dosenData.slice(0, 50)" :key="index">
+                                        <tr class="table-row">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm font-mono text-gray-900" x-text="dosen.nidn"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm font-medium text-gray-900" x-text="dosen.nama"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="badge badge-blue" x-text="dosen.kode_prodi"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <button class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">Edit</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kuliah Tab -->
+                <div x-show="currentTab === 'kuliah'">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-gray-900">Data Kuliah</h2>
+                            <p class="text-gray-600">Course and class information</p>
+                        </div>
+                        <button class="btn-primary" x-show="!isLoading && !hasError">
+                            <i class="fas fa-plus mr-2"></i>Tambah Kuliah
+                        </button>
+                    </div>
+                    
+                    <!-- Memuat for Kuliah -->
+                    <div x-show="isLoading" class="flex items-center justify-center py-12">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                            <p class="text-sm text-gray-600">Memuat kuliah data...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Error for Kuliah -->
+                    <div x-show="hasError" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-red-700">Failed to load kuliah data. <button @click="loadData()" class="text-red-800 underline">Retry</button></p>
+                    </div>
+
+                    <div class="card">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-medium text-gray-900">All Classes</h3>
+                                <span class="text-sm text-gray-500" x-text="kuliahData.length + ' total'"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto scrollbar-thin" style="max-height: 500px;">
+                            <table class="w-full">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mata Kuliah</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kelas</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dosen</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKS</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <template x-for="(kuliah, index) in kuliahData.slice(0, 50)" :key="index">
+                                        <tr class="table-row">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm font-mono text-gray-900" x-text="kuliah.kode_kuliah"></span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="text-sm text-gray-900" x-text="kuliah.kode_matakuliah"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm font-medium text-gray-900" x-text="kuliah.nama_kelas"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm text-gray-900" x-text="kuliah.nama_dosen"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="badge badge-green" x-text="kuliah.sks + ' SKS'"></span>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Waktu Tab -->
+                <div x-show="currentTab === 'waktu'">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-900">Slot Waktu</h2>
+                        <p class="text-gray-600">50-minute interval time slots</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <template x-for="day in ['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU']" :key="day">
+                            <div class="card">
+                                <div class="p-4 border-b border-gray-200">
+                                    <h3 class="text-lg font-medium text-gray-900" x-text="day"></h3>
+                                </div>
+                                <div class="p-4 space-y-2">
+                                    <template x-for="(waktu, index) in waktuData.filter(w => w.nama_hari === day)" :key="index">
+                                        <div class="time-slot flex justify-between items-center">
+                                            <span class="text-sm text-gray-600" x-text="'Slot ' + (index + 1)"></span>
+                                            <span class="text-sm font-mono font-medium text-gray-900" x-text="waktu.waktu"></span>
+                                            <span class="text-xs text-gray-400" x-text="'#' + waktu.kode_waktu"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Ruangan Tab -->
+                <div x-show="currentTab === 'ruangan'">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-900">Data Ruangan</h2>
+                        <p class="text-gray-600">Available rooms for scheduling</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <template x-for="(ruangan, index) in ruanganData" :key="index">
+                            <div class="card p-6 card-hover text-center">
+                                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-door-open text-gray-600"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900" x-text="ruangan.nama_ruangan"></h3>
+                                <p class="text-sm text-gray-600 mt-1">Room ID: <span class="font-mono" x-text="ruangan.id"></span></p>
+                                <button class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium">Manage</button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Preferences Tab -->
+                <div x-show="currentTab === 'preferences'">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-900">Preferensi Waktu Dosen</h2>
+                        <p class="text-gray-600">Kelola preferensi waktu mengajar dosen</p>
+                    </div>
+
+                    <!-- Tambah Preferensi Form -->
+                    <div class="card p-6 mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Tambah Preferensi Baru</h3>
+                        <form @submit.prevent="addPreference()">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div x-data="{ 
+                                    searchOpen: false, 
+                                    searchQuery: '', 
+                                    selectedDosen: null,
+                                    get filteredDosen() {
+                                        if (!this.searchQuery) return this.dosenData.slice(0, 50);
+                                        return this.dosenData.filter(dosen => 
+                                            dosen.nama.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                                            dosen.nidn.includes(this.searchQuery)
+                                        ).slice(0, 20);
+                                    }
+                                }" class="relative">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Cari & Pilih Dosen</label>
+                                    
+                                    <!-- Search Input -->
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            x-model="searchQuery"
+                                            @focus="searchOpen = true"
+                                            @click="searchOpen = true"
+                                            placeholder="Ketik nama dosen atau NIDN untuk mencari..."
+                                            class="w-full p-3 pl-10 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        >
+                                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <button 
+                                            @click="searchQuery = ''; selectedDosen = null; newPreference.nidn = ''; searchOpen = false"
+                                            class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                            type="button"
+                                        >
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Selected Dosen Display -->
+                                    <div x-show="selectedDosen" class="mt-2 p-3 selected-dosen rounded-lg">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-user-check text-blue-600 mr-2"></i>
+                                                <div>
+                                                    <span class="text-sm font-medium text-blue-900" x-text="selectedDosen?.nama"></span>
+                                                    <span class="text-xs text-blue-700 ml-2" x-text="'NIDN: ' + selectedDosen?.nidn"></span>
+                                                </div>
+                                            </div>
+                                            <button @click="selectedDosen = null; newPreference.nidn = ''; searchQuery = ''" class="text-blue-600 hover:text-red-600 transition-colors" type="button">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dropdown Results -->
+                                    <div x-show="searchOpen && searchQuery.length > 0" 
+                                         @click.away="searchOpen = false"
+                                         class="absolute z-50 w-full mt-1 bg-white search-dropdown rounded-lg max-h-64 overflow-y-auto">
+                                        
+                                        <!-- Search Results Header -->
+                                        <div x-show="filteredDosen.length > 0" class="px-4 py-2 bg-gray-50 border-b border-gray-200 text-xs text-gray-600">
+                                            <span x-text="filteredDosen.length + ' dosen ditemukan'"></span>
+                                            <span x-show="filteredDosen.length === 20" class="text-blue-600 ml-2">(menampilkan 20 teratas)</span>
+                                        </div>
+                                        
+                                        <!-- No Results State -->
+                                        <div x-show="filteredDosen.length === 0 && searchQuery.length > 0" class="p-4 text-center text-gray-500">
+                                            <i class="fas fa-user-slash text-gray-400 text-2xl mb-2"></i>
+                                            <div class="text-sm">Tidak ada dosen yang ditemukan</div>
+                                            <div class="text-xs text-gray-400 mt-1">Coba kata kunci lain</div>
+                                        </div>
+
+                                        <!-- Search Results -->
+                                        <template x-for="dosen in filteredDosen" :key="dosen.nidn">
+                                            <button 
+                                                @click="
+                                                    selectedDosen = dosen; 
+                                                    newPreference.nidn = dosen.nidn; 
+                                                    searchQuery = dosen.nama;
+                                                    searchOpen = false;
+                                                "
+                                                class="w-full text-left px-4 py-3 search-item border-b border-gray-100 last:border-b-0 focus:outline-none"
+                                                type="button"
+                                            >
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <div class="font-medium text-gray-900" x-text="dosen.nama"></div>
+                                                        <div class="text-sm text-gray-600" x-text="'NIDN: ' + dosen.nidn"></div>
+                                                    </div>
+                                                    <div class="text-xs text-gray-500" x-text="dosen.kode_prodi"></div>
+                                                </div>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Hari</label>
+                                    <select x-model="newPreference.hari" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                        <option value="">-- Pilih Hari --</option>
+                                        <option value="SENIN">Senin</option>
+                                        <option value="SELASA">Selasa</option>
+                                        <option value="RABU">Rabu</option>
+                                        <option value="KAMIS">Kamis</option>
+                                        <option value="JUMAT">Jumat</option>
+                                        <option value="SABTU">Sabtu</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Waktu yang Disukai</label>
+                                    <div class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                                        <template x-for="waktu in waktuData.filter(w => w.nama_hari === newPreference.hari)" :key="waktu.kode_waktu">
+                                            <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-green-50">
+                                                <input type="checkbox" :value="waktu.kode_waktu" x-model="newPreference.waktu_suka" class="text-green-600 rounded">
+                                                <span class="text-sm font-mono" x-text="waktu.waktu"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Waktu yang Tidak Bisa</label>
+                                    <div class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin">
+                                        <template x-for="waktu in waktuData.filter(w => w.nama_hari === newPreference.hari)" :key="waktu.kode_waktu">
+                                            <label class="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer hover:bg-red-50">
+                                                <input type="checkbox" :value="waktu.kode_waktu" x-model="newPreference.waktu_tidak_bisa" class="text-red-600 rounded">
+                                                <span class="text-sm font-mono" x-text="waktu.waktu"></span>
+                                            </label>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-plus mr-2"></i>Tambah Preferensi
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Preferences List -->
+                    <div class="card">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-medium text-gray-900">Preferensi Saat Ini</h3>
+                                <span class="text-sm text-gray-500" x-text="preferenceData.length + ' preferensi'"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto scrollbar-thin" style="max-height: 400px;">
+                            <table class="w-full">
+                                <thead class="table-header sticky top-0">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dosen</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hari</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu Disukai</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tidak Tersedia</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <template x-for="(pref, index) in preferenceData" :key="index">
+                                        <tr class="table-row">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm font-medium text-gray-900" x-text="pref.nama_dosen"></span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="badge badge-blue" x-text="pref.hari"></span>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex flex-wrap gap-1">
+                                                    <template x-for="waktu in pref.waktu_suka_detail" :key="waktu">
+                                                        <span class="badge badge-green" x-text="waktu"></span>
+                                                    </template>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <div class="flex flex-wrap gap-1">
+                                                    <template x-for="waktu in pref.waktu_tidak_bisa_detail" :key="waktu">
+                                                        <span class="badge badge-red" x-text="waktu"></span>
+                                                    </template>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <button @click="deletePreference(index)" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                                    <i class="fas fa-trash mr-1"></i>Delete
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Generation Tab -->
+                <div x-show="currentTab === 'schedule'">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-semibold text-gray-900">Generate Schedule</h2>
+                        <p class="text-gray-600">Create optimized class schedules using genetic algorithm</p>
+                    </div>
+
+                    <!-- Generation Controls -->
+                    <div class="card p-6 mb-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Left Column: Parameters -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-medium text-gray-900">Algorithm Parameters</h3>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-600">Auto</span>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" x-model="useAutoParameters" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </label>
+                                        <span class="text-sm text-gray-600">Manual</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Auto Mode: Recommendations -->
+                                <div x-show="!useAutoParameters">
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                        <div class="flex items-center mb-2">
+                                            <i class="fas fa-robot text-blue-600 mr-2"></i>
+                                            <span class="text-sm font-medium text-blue-800">Smart Parameter Selection</span>
+                                        </div>
+                                        <p class="text-xs text-blue-700 mb-3">Parameters automatically optimized based on your data characteristics</p>
+                                        
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <button @click="selectParameterMode('conservative')" 
+                                                    :class="parameterMode === 'conservative' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-50'"
+                                                    class="px-3 py-2 border border-blue-600 rounded text-xs font-medium transition-colors">
+                                                Fast
+                                            </button>
+                                            <button @click="selectParameterMode('balanced')" 
+                                                    :class="parameterMode === 'balanced' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-50'"
+                                                    class="px-3 py-2 border border-blue-600 rounded text-xs font-medium transition-colors">
+                                                Balanced
+                                            </button>
+                                            <button @click="selectParameterMode('aggressive')" 
+                                                    :class="parameterMode === 'aggressive' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 hover:bg-blue-50'"
+                                                    class="px-3 py-2 border border-blue-600 rounded text-xs font-medium transition-colors">
+                                                Thorough
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="mt-3 p-2 bg-white rounded border" x-show="parameterRecommendations">
+                                            <div class="text-xs text-gray-700" x-text="getCurrentModeDescription()"></div>
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                Est. time: <span x-text="getCurrentModeTime()"></span>s
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Problem Analysis Display -->
+                                    <div class="bg-gray-50 rounded-lg p-3 mb-4" x-show="problemAnalysis">
+                                        <h4 class="text-sm font-medium text-gray-800 mb-2">Problem Analysis</h4>
+                                        <div class="grid grid-cols-2 gap-2 text-xs">
+                                            <div>Classes: <span class="font-medium" x-text="problemAnalysis?.n_kuliah"></span></div>
+                                            <div>Complexity: <span class="font-medium" x-text="problemAnalysis?.complexity_level"></span></div>
+                                            <div>Time Slots: <span class="font-medium" x-text="problemAnalysis?.n_waktu"></span></div>
+                                            <div>Rooms: <span class="font-medium" x-text="problemAnalysis?.n_ruangan"></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Manual Mode: Traditional Controls -->
+                                <div x-show="useAutoParameters">
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Population Size</label>
+                                            <input type="number" x-model="scheduleConfig.population_size" min="4" max="20" 
+                                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <p class="text-xs text-gray-500 mt-1">Number of chromosomes in each generation (4-20)</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Max Generations</label>
+                                            <input type="number" x-model="scheduleConfig.max_generations" min="10" max="500" 
+                                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <p class="text-xs text-gray-500 mt-1">Maximum number of generations to run (10-500)</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Crossover Rate</label>
+                                            <input type="number" x-model="scheduleConfig.crossover_rate" min="0.1" max="1.0" step="0.1" 
+                                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <p class="text-xs text-gray-500 mt-1">Probability of crossover between parents (0.1-1.0)</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Mutation Rate</label>
+                                            <input type="number" x-model="scheduleConfig.mutation_rate" min="0.01" max="0.5" step="0.01" 
+                                                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                            <p class="text-xs text-gray-500 mt-1">Probability of mutation (0.01-0.5)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Status & Controls -->
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Generation Status</h3>
+                                
+                                <!-- Status Card -->
+                                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-700">Status:</span>
+                                        <span :class="{
+                                            'text-blue-600': scheduleProgress.status === 'generating',
+                                            'text-green-600': scheduleProgress.status === 'completed',
+                                            'text-red-600': scheduleProgress.status === 'error',
+                                            'text-gray-500': scheduleProgress.status === 'idle'
+                                        }" class="text-sm font-semibold capitalize" x-text="scheduleProgress.status"></span>
+                                    </div>
+                                    
+                                    <div class="mb-2" x-show="scheduleProgress.status === 'generating'">
+                                        <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                            <span>Progress</span>
+                                            <span x-text="Math.round(scheduleProgress.progress) + '%'"></span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                                                 :style="'width: ' + scheduleProgress.progress + '%'"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div x-show="scheduleProgress.generation" class="text-sm text-gray-600">
+                                        Generation: <span class="font-medium" x-text="scheduleProgress.generation"></span> / 
+                                        <span x-text="scheduleProgress.max_generations"></span>
+                                    </div>
+                                    
+                                    <div x-show="scheduleProgress.best_fitness" class="text-sm text-gray-600">
+                                        Best Fitness: <span class="font-medium" x-text="scheduleProgress.best_fitness"></span>
+                                    </div>
+                                    
+                                    <div x-show="scheduleProgress.message" class="text-sm text-gray-700 mt-2 font-medium" x-text="scheduleProgress.message"></div>
+                                </div>
+
+                                <!-- Control Buttons -->
+                                <div class="space-y-3">
+                                    <button @click="generateSchedule()" 
+                                            :disabled="scheduleProgress.status === 'generating'"
+                                            :class="scheduleProgress.status === 'generating' ? 'bg-gray-400 cursor-not-allowed' : 'btn-primary hover:bg-gray-700'"
+                                            class="w-full py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center">
+                                        <i :class="scheduleProgress.status === 'generating' ? 'fas fa-spinner fa-spin' : 'fas fa-play'" class="mr-2"></i>
+                                        <span x-text="scheduleProgress.status === 'generating' ? 'Generating...' : 'Start Generation'"></span>
+                                    </button>
+                                    
+                                    <button @click="cancelGeneration()" 
+                                            x-show="scheduleProgress.status === 'generating'"
+                                            class="w-full py-2 px-4 border border-red-600 text-red-600 rounded-lg font-medium hover:bg-red-50 transition-colors">
+                                        <i class="fas fa-stop mr-2"></i>Cancel Generation
+                                    </button>
+                                    
+                                    <button @click="viewGeneratedSchedule()" 
+                                            x-show="scheduleProgress.status === 'completed'"
+                                            class="w-full py-2 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                                        <i class="fas fa-eye mr-2"></i>View Schedule
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generated Schedule Display -->
+                    <div x-show="generatedSchedule && showScheduleResults" class="card">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900">Generated Schedule</h3>
+                                    <div class="flex items-center space-x-4 mt-1" x-show="generatedSchedule?.metadata">
+                                        <p class="text-sm text-gray-600">
+                                            <span x-text="generatedSchedule?.metadata?.total_kuliah"></span> classes in 
+                                            <span x-text="generatedSchedule?.metadata?.execution_time"></span>s
+                                        </p>
+                                        <div x-show="generatedSchedule?.metadata?.conflict_free" class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 mr-1"></i>
+                                            <span class="text-sm text-green-600 font-medium">Conflict-Free</span>
+                                        </div>
+                                        <div x-show="!generatedSchedule?.metadata?.conflict_free" class="flex items-center">
+                                            <i class="fas fa-exclamation-triangle text-red-600 mr-1"></i>
+                                            <span class="text-sm text-red-600 font-medium">Has Conflicts</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500">
+                                            Fitness: <span x-text="generatedSchedule?.metadata?.best_fitness"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button @click="exportSchedule('excel')" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
+                                        <i class="fas fa-file-excel mr-1"></i>Export Excel
+                                    </button>
+                                    <button @click="showScheduleResults = false" class="px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700">
+                                        <i class="fas fa-times mr-1"></i>Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Schedule by Hari View -->
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <div class="flex space-x-4 border-b border-gray-200">
+                                    <template x-for="day in scheduleByHari" :key="day.day">
+                                        <button @click="selectedHari = day.day" 
+                                                :class="selectedHari === day.day ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                                                class="py-2 px-1 border-b-2 font-medium text-sm transition-colors">
+                                            <span x-text="day.day"></span>
+                                            <span class="ml-1 text-xs" x-text="'(' + day.classes.length + ')'"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <!-- Schedule Table for Selected Hari -->
+                            <div class="overflow-x-auto scrollbar-thin" style="max-height: 600px;">
+                                <table class="w-full">
+                                    <thead class="table-header sticky top-0">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lecturer</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <template x-for="schedule in getScheduleForHari(selectedHari)" :key="schedule.kuliah_id">
+                                            <tr class="table-row">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="text-sm font-mono text-gray-900" x-text="schedule.waktu"></span>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span class="text-sm text-gray-900" x-text="schedule.kode_matakuliah"></span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="text-sm font-medium text-gray-900" x-text="schedule.nama_kelas"></span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="text-sm text-gray-900" x-text="schedule.dosen"></span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="badge badge-purple" x-text="schedule.ruangan"></span>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <span class="badge badge-green" x-text="schedule.sks + ' SKS'"></span>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function schedulingApp() {
+            return {
+                currentTab: 'dashboard',
+                isLoading: true,
+                loadingMessage: 'Memuat data dari database...',
+                hasError: false,
+                errorMessage: '',
+                stats: {
+                    dosen: 0,
+                    kuliah: 0,
+                    waktu: 0,
+                    ruangan: 0
+                },
+                dosenData: [],
+                kuliahData: [],
+                waktuData: [],
+                ruanganData: [],
+                preferenceData: [],
+                newPreference: {
+                    nidn: '',
+                    hari: '',
+                    waktu_suka: [],
+                    waktu_tidak_bisa: []
+                },
+                scheduleConfig: {
+                    population_size: 8,
+                    max_generations: 100,
+                    crossover_rate: 0.75,
+                    mutation_rate: 0.25
+                },
+                scheduleProgress: {
+                    status: 'idle',
+                    progress: 0,
+                    message: '',
+                    generation: 0,
+                    max_generations: 0,
+                    best_fitness: 0
+                },
+                generatedSchedule: null,
+                showScheduleResults: false,
+                scheduleByHari: [],
+                selectedHari: 'SENIN',
+                progressInterval: null,
+                useAutoParameters: false,
+                parameterMode: 'balanced',
+                parameterRecommendations: null,
+                problemAnalysis: null,
+
+                init() {
+                    this.loadData();
+                    this.loadParameterRecommendations();
+                },
+
+                async loadData() {
+                    this.isLoading = true;
+                    this.hasError = false;
+                    this.loadingMessage = 'Menghubungkan ke database...';
+                    
+                    try {
+                        console.log('Memuat data dari API...');
+                        this.loadingMessage = 'Mengambil data dari database...';
+                        
+                        const response = await fetch('/api/data');
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        this.loadingMessage = 'Memproses respon database...';
+                        const data = await response.json();
+                        
+                        // Verify data completeness
+                        if (!data.dosen || !data.kuliah || !data.waktu || !data.ruangan) {
+                            throw new Error('Incomplete data received from server');
+                        }
+                        
+                        this.dosenData = data.dosen || [];
+                        this.kuliahData = data.kuliah || [];
+                        this.waktuData = data.waktu || [];
+                        this.ruanganData = data.ruangan || [];
+                        this.preferenceData = data.preferences || [];
+                        
+                        this.stats = {
+                            dosen: this.dosenData.length,
+                            kuliah: this.kuliahData.length,
+                            waktu: this.waktuData.length,
+                            ruangan: this.ruanganData.length
+                        };
+                        
+                        // Add minimum loading time so user can see the indicator
+                        setTimeout(() => {
+                            this.isLoading = false;
+                            console.log('✅ Real database data loaded successfully:', this.stats);
+                        }, 1000); // Show loading for at least 1 second
+                        
+                    } catch (error) {
+                        console.error('❌ Error loading database data:', error);
+                        this.isLoading = false;
+                        this.hasError = true;
+                        this.errorMessage = `Gagal memuat data database: ${error.message}. Silakan periksa koneksi server.`;
+                        
+                        // Retry after 3 seconds
+                        setTimeout(() => {
+                            if (this.hasError) {
+                                console.log('🔄 Retrying database connection...');
+                                this.loadData();
+                            }
+                        }, 3000);
+                    }
+                },
+
+                loadSampleData() {
+                    console.log('Memuat sample data...');
+                    
+                    this.stats = { dosen: 2, kuliah: 1, waktu: 4, ruangan: 2 };
+                    this.dosenData = [
+                        { nidn: '0125017702', nama: 'ANDI SALSA ANGGERAINI', kode_prodi: '11201' },
+                        { nidn: '0901037802', nama: 'ANDI NILAWATI', kode_prodi: '11201' }
+                    ];
+                    this.kuliahData = [
+                        { kode_kuliah: '1', kode_matakuliah: 'AW6202012201', nama_kelas: '2 A', nama_dosen: 'ABD. RAHMAN', sks: '2', kode_prodi: '20201' }
+                    ];
+                    this.waktuData = [
+                        { kode_waktu: '1', nama_hari: 'SENIN', waktu: '07:00' },
+                        { kode_waktu: '2', nama_hari: 'SENIN', waktu: '07:50' }
+                    ];
+                    this.ruanganData = [
+                        { id: '1', nama_ruangan: 'KB3.13' },
+                        { id: '2', nama_ruangan: 'KB3.14' }
+                    ];
+                    this.preferenceData = [
+                        { id: 1, nama_dosen: 'ANDI SALSA ANGGERAINI', hari: 'SENIN', waktu_suka_detail: ['07:00'], waktu_tidak_bisa_detail: ['11:10'] }
+                    ];
+                },
+
+                async addPreference() {
+                    if (!this.newPreference.nidn || !this.newPreference.hari) {
+                        alert('Silakan pilih dosen dan hari!');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/api/preferences', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.newPreference)
+                        });
+
+                        if (response.ok) {
+                            this.loadData();
+                            this.resetForm();
+                            alert('Preferensi berhasil ditambahkan!');
+                        }
+                    } catch (error) {
+                        console.error('Error adding preference:', error);
+                        alert('Error: ' + error.message);
+                    }
+                },
+
+                async deletePreference(index) {
+                    if (confirm('Hapus preferensi ini?')) {
+                        try {
+                            const pref = this.preferenceData[index];
+                            const response = await fetch(`/api/preferences/${pref.id}`, {
+                                method: 'DELETE'
+                            });
+
+                            if (response.ok) {
+                                this.preferenceData.splice(index, 1);
+                                alert('Preferensi berhasil dihapus!');
+                            }
+                        } catch (error) {
+                            console.error('Error deleting preference:', error);
+                        }
+                    }
+                },
+
+                resetForm() {
+                    this.newPreference = {
+                        nidn: '',
+                        hari: '',
+                        waktu_suka: [],
+                        waktu_tidak_bisa: []
+                    };
+                },
+
+                async cancelGeneration() {
+                    try {
+                        const response = await fetch('/api/cancel-generation', { method: 'POST' });
+                        if (response.ok) {
+                            this.stopProgressPolling();
+                            alert('Schedule generation cancelled');
+                        }
+                    } catch (error) {
+                        console.error('Error cancelling generation:', error);
+                    }
+                },
+
+                startProgressPolling() {
+                    this.progressInterval = setInterval(async () => {
+                        try {
+                            const response = await fetch('/api/schedule-progress');
+                            if (response.ok) {
+                                const progress = await response.json();
+                                this.scheduleProgress = progress;
+
+                                if (progress.status === 'completed') {
+                                    this.stopProgressPolling();
+                                    await this.loadGeneratedSchedule();
+                                } else if (progress.status === 'error' || progress.status === 'cancelled') {
+                                    this.stopProgressPolling();
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error polling progress:', error);
+                        }
+                    }, 1000); // Poll every second
+                },
+
+                stopProgressPolling() {
+                    if (this.progressInterval) {
+                        clearInterval(this.progressInterval);
+                        this.progressInterval = null;
+                    }
+                },
+
+                async loadGeneratedSchedule() {
+                    try {
+                        const response = await fetch('/api/generated-schedule');
+                        if (response.ok) {
+                            this.generatedSchedule = await response.json();
+                            this.processScheduleData();
+                        }
+                    } catch (error) {
+                        console.error('Error loading generated schedule:', error);
+                    }
+                },
+
+                processScheduleData() {
+                    if (!this.generatedSchedule || !this.generatedSchedule.schedule) return;
+
+                    // Group schedule by day
+                    const byHari = {};
+                    this.generatedSchedule.schedule.forEach(item => {
+                        if (!byHari[item.hari]) {
+                            byHari[item.hari] = [];
+                        }
+                        byHari[item.hari].push(item);
+                    });
+
+                    // Sort classes within each day by time
+                    Object.keys(byHari).forEach(day => {
+                        byHari[day].sort((a, b) => a.waktu.localeCompare(b.waktu));
+                    });
+
+                    // Convert to array format for template
+                    this.scheduleByHari = Object.keys(byHari).map(day => ({
+                        day: day,
+                        classes: byHari[day]
+                    }));
+
+                    // Set first day as selected
+                    if (this.scheduleByHari.length > 0) {
+                        this.selectedHari = this.scheduleByHari[0].day;
+                    }
+                },
+
+                viewGeneratedSchedule() {
+                    this.showScheduleResults = true;
+                    if (!this.generatedSchedule) {
+                        this.loadGeneratedSchedule();
+                    }
+                },
+
+                getScheduleForHari(day) {
+                    const dayData = this.scheduleByHari.find(d => d.day === day);
+                    return dayData ? dayData.classes : [];
+                },
+
+                exportSchedule(format) {
+                    if (format === 'excel') {
+                        // Create CSV content
+                        let csv = 'Hari,Time,Course Code,Class,Lecturer,Room,SKS\n';
+                        
+                        this.generatedSchedule.schedule.forEach(item => {
+                            csv += `${item.hari},${item.waktu},"${item.kode_matakuliah}","${item.nama_kelas}","${item.dosen}","${item.ruangan}",${item.sks}\n`;
+                        });
+
+                        // Download CSV file
+                        const blob = new Blob([csv], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'generated_schedule.csv';
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    }
+                },
+
+                async loadParameterRecommendations() {
+                    try {
+                        const response = await fetch('/api/parameter-recommendations');
+                        if (response.ok) {
+                            this.parameterRecommendations = await response.json();
+                            this.problemAnalysis = this.parameterRecommendations.analysis;
+                            
+                            // Set default auto parameters based on recommendations
+                            this.applyParameterMode(this.parameterMode);
+                        }
+                    } catch (error) {
+                        console.error('Error loading parameter recommendations:', error);
+                    }
+                },
+
+                selectParameterMode(mode) {
+                    this.parameterMode = mode;
+                    this.applyParameterMode(mode);
+                },
+
+                applyParameterMode(mode) {
+                    if (this.parameterRecommendations && this.parameterRecommendations.recommendations[mode]) {
+                        const params = this.parameterRecommendations.recommendations[mode].parameters;
+                        this.scheduleConfig = {
+                            population_size: params.population_size,
+                            max_generations: params.max_generations,
+                            crossover_rate: params.crossover_rate,
+                            mutation_rate: params.mutation_rate
+                        };
+                    }
+                },
+
+                getCurrentModeDescription() {
+                    if (this.parameterRecommendations && this.parameterRecommendations.recommendations[this.parameterMode]) {
+                        return this.parameterRecommendations.recommendations[this.parameterMode].description;
+                    }
+                    return '';
+                },
+
+                getCurrentModeTime() {
+                    if (this.parameterRecommendations && this.parameterRecommendations.recommendations[this.parameterMode]) {
+                        return this.parameterRecommendations.recommendations[this.parameterMode].estimated_time;
+                    }
+                    return '0';
+                },
+
+                async generateSchedule() {
+                    try {
+                        // Use auto parameters if enabled
+                        let configToUse = this.scheduleConfig;
+                        if (!this.useAutoParameters && this.parameterRecommendations) {
+                            configToUse = this.parameterRecommendations.recommendations[this.parameterMode].parameters;
+                        }
+
+                        const response = await fetch('/api/generate-schedule', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(configToUse)
+                        });
+
+                        if (response.ok) {
+                            this.scheduleProgress.status = 'generating';
+                            this.startProgressPolling();
+                            alert('Schedule generation started! Check the progress panel.');
+                        } else {
+                            const error = await response.json();
+                            alert('Error: ' + error.error);
+                        }
+                    } catch (error) {
+                        console.error('Error starting schedule generation:', error);
+                        alert('Error starting schedule generation: ' + error.message);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+[
+  {
+    "kode_waktu": "1",
+    "nama_hari": "SENIN",
+    "waktu": "14:40"
+  },
+  {
+    "kode_waktu": "10",
+    "nama_hari": "SELASA",
+    "waktu": "07:00"
+  },
+  {
+    "kode_waktu": "11",
+    "nama_hari": "RABU",
+    "waktu": "14:40"
+  },
+  {
+    "kode_waktu": "12",
+    "nama_hari": "RABU",
+    "waktu": "13:00"
+  },
+  {
+    "kode_waktu": "13",
+    "nama_hari": "RABU",
+    "waktu": "10:20"
+  },
+  {
+    "kode_waktu": "14",
+    "nama_hari": "RABU",
+    "waktu": "08:40"
+  },
+  {
+    "kode_waktu": "15",
+    "nama_hari": "RABU",
+    "waktu": "07:00"
+  },
+  {
+    "kode_waktu": "16",
+    "nama_hari": "KAMIS",
+    "waktu": "14:40"
+  },
+  {
+    "kode_waktu": "17",
+    "nama_hari": "KAMIS",
+    "waktu": "13:00"
+  },
+  {
+    "kode_waktu": "18",
+    "nama_hari": "KAMIS",
+    "waktu": "10:20"
+  },
+  {
+    "kode_waktu": "19",
+    "nama_hari": "KAMIS",
+    "waktu": "08:40"
+  },
+  {
+    "kode_waktu": "2",
+    "nama_hari": "SENIN",
+    "waktu": "13:00"
+  },
+  {
+    "kode_waktu": "20",
+    "nama_hari": "KAMIS",
+    "waktu": "07:00"
+  },
+  {
+    "kode_waktu": "21",
+    "nama_hari": "JUMAT",
+    "waktu": "14:40"
+  },
+  {
+    "kode_waktu": "22",
+    "nama_hari": "JUMAT",
+    "waktu": "13:00"
+  },
+  {
+    "kode_waktu": "23",
+    "nama_hari": "JUMAT",
+    "waktu": "10:20"
+  },
+  {
+    "kode_waktu": "24",
+    "nama_hari": "JUMAT",
+    "waktu": "08:40"
+  },
+  {
+    "kode_waktu": "25",
+    "nama_hari": "JUMAT",
+    "waktu": "07:00"
+  },
+  {
+    "kode_waktu": "26",
+    "nama_hari": "SABTU",
+    "waktu": "14:40"
+  },
+  {
+    "kode_waktu": "27",
+    "nama_hari": "SABTU",
+    "waktu": "13:00"
+  },
+  {
+    "kode_waktu": "28",
+    "nama_hari": "SABTU",
+    "waktu": "10:20"
+  },
+  {
+    "kode_waktu": "29",
+    "nama_hari": "SABTU",
+    "waktu": "08:40"
+  },
+  {
+    "kode_waktu": "3",
+    "nama_hari": "SENIN",
+    "waktu": "10:20"
+  },
+  {
+    "kode_waktu": "30",
+    "nama_hari": "SABTU",
+    "waktu": "07:00"
+  },
+  {
+    "kode_waktu": "4",
+    "nama_hari": "SENIN",
+    "waktu": "08:40"
+  },
+  {
+    "kode_waktu": "5",
+    "nama_hari": "SENIN",
+    "waktu": "07:00"
+  },
+  {
+    "kode_waktu": "6",
+    "nama_hari": "SELASA",
+    "waktu": "14:40"
+  },
+  {
+    "kode_waktu": "7",
+    "nama_hari": "SELASA",
+    "waktu": "13:00"
+  },
+  {
+    "kode_waktu": "8",
+    "nama_hari": "SELASA",
+    "waktu": "10:20"
+  },
+  {
+    "kode_waktu": "9",
+    "nama_hari": "SELASA",
+    "waktu": "08:40"
+  }
+]
